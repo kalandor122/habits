@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+dist/
+build/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Docker
+pgdata/
+
+# TypeScript
+*.tsbuildinfo
+
+# OS
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Coverage
+coverage/
