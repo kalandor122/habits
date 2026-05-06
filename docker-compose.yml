@@ -33,9 +33,9 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-habits}
       POSTGRES_USER: ${POSTGRES_USER:-habits}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-habits_secret}
-      MQTT_BROKER_URL: ${MQTT_BROKER_URL:-mqtt://mqtt:1883}
+      MQTT_BROKER_URL: ${MQTT_BROKER_URL:-disabled}
       MQTT_TOPIC: ${MQTT_TOPIC:-habits/completed}
-      SERVER_PORT: ${SERVER_PORT:-3001}
+      SERVER_PORT: 3001
     ports:
       - "${SERVER_PORT:-3001}:3001"
     healthcheck:
