@@ -3,8 +3,9 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
 COPY tsconfig.json tsconfig.node.json vite.config.ts tailwind.config.js postcss.config.js index.html ./
-COPY public ./public
+# Copy public folder only if it contains files (prevents build failure if empty)
 COPY src ./src
+COPY public* ./public/
 RUN npm run build
 
 FROM nginx:1.25-alpine AS runner
