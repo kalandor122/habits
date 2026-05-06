@@ -13,7 +13,7 @@ services:
       - pgdata:/var/lib/postgresql/data
       - ./schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-habits} -d ${POSTGRES_DB:-habits}"]
+      test: ["CMD-SHELL", "pg_isready -p 5432 -U ${POSTGRES_USER:-habits} -d ${POSTGRES_DB:-habits}"]
       interval: 5s
       timeout: 3s
       retries: 5
