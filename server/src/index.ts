@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import pool from './db/pool.js';
+import { initDatabase } from './db/init.js';
 import { connect as connectMqtt } from './services/mqtt.js';
 import habitsRouter from './routes/habits.js';
 import completionsRouter from './routes/completions.js';
@@ -32,6 +33,7 @@ async function start() {
     return;
   }
 
+  await initDatabase();
   connectMqtt();
 
   app.listen(PORT, () => {
