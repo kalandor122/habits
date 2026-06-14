@@ -36,6 +36,7 @@ services:
       MQTT_BROKER_URL: ${MQTT_BROKER_URL:-disabled}
       MQTT_TOPIC: ${MQTT_TOPIC:-habits/completed}
       SERVER_PORT: 3001
+      CORS_ORIGIN: ${CORS_ORIGIN:-*}
     ports:
       - "${SERVER_PORT:-3001}:3001"
     healthcheck:
