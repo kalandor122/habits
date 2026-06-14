@@ -12,7 +12,7 @@ function getIntensity(pct: number): number {
 }
 
 const SHADES = [
-  'bg-gray-200 border border-black-100',
+  'bg-gray-200 border border-gray-100',
   'bg-green-100 border border-green-200',
   'bg-green-200 border border-green-300',
   'bg-green-400 border border-green-500',
@@ -37,7 +37,7 @@ export default function GitHubGrid() {
     const map = new Map<string, number>();
     for (const s of stats) {
       const key = normalizeDate(s.date);
-      map.set(key, parseFloat(s.pct as unknown as string) || 0);
+      map.set(key, parseFloat(s.pct) || 0);
     }
 
     const days: { date: string; pct: number; level: number }[] = [];

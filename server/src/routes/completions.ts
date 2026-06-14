@@ -25,6 +25,9 @@ router.get('/today', async (_req: Request, res: Response) => {
 router.get('/range', async (req: Request, res: Response) => {
   try {
     const { from, to } = req.query;
+    if (!from || !to) {
+      return res.status(400).json({ error: 'from and to query params are required' });
+    }
     const result = await pool.query(
       `SELECT c.id, c.habit_id, c.count, c.completed_at::date::text AS date,
         h.title, h.daily_target, h.category_id, cat.name AS category_name
@@ -46,6 +49,11 @@ router.post('/', async (req: Request, res: Response) => {
   try {
     const { habit_id, count, date } = req.body;
 
+    // Validate habit_id is present and numeric
+    if (habit_id === undefined || habit_id === null || !Number.isInteger(habit_id) || habit_id <= 0) {
+      return res.status(400).json({ error: 'habit_id is required and must be a positive integer' });
+    }
+
     const habitResult = await pool.query(
       'SELECT h.title, c.name AS category_name FROM habits h LEFT JOIN categories c ON c.id = h.category_id WHERE h.id = $1',
       [habit_id]
@@ -54,7 +62,9 @@ router.post('/', async (req: Request, res: Response) => {
 
     let completedAt: string;
     if (date) {
-      completedAt = `${date} ${new Date().toTimeString().slice(0, 8)}+00`;
+      // Use proper ISO format for the timestamp
+      const now = new Date();
+      completedAt = new Date(`${date}T${now.toTimeString().slice(0, 8)}Z`).toISOString();
     } else {
       completedAt = new Date().toISOString();
     }
@@ -82,6 +92,9 @@ router.post('/', async (req: Request, res: Response) => {
 router.delete('/', async (req: Request, res: Response) => {
   try {
     const { habit_id, date } = req.query;
+    if (!habit_id || !date) {
+      return res.status(400).json({ error: 'habit_id and date query params are required' });
+    }
     await pool.query(
       'DELETE FROM completions WHERE habit_id = $1 AND completed_at::date = $2::date',
       [habit_id, date]

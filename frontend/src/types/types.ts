@@ -36,7 +36,7 @@ export interface DailyStat {
   date: string;
   completed: number;
   total: number;
-  pct: number;
+  pct: string;
 }
 
 export interface TodayStat {
@@ -47,8 +47,6 @@ export interface TodayStat {
 
 export interface StreakData {
   streak: number;
-  current: number;
-  previous: number;
 }
 
 export interface CellState {

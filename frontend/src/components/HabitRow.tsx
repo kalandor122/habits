@@ -1,15 +1,12 @@
 import type { Habit } from '../types/types';
 import { useDeleteHabit } from '../hooks/useHabits';
+import { isSameDay } from 'date-fns';
 
 interface Props {
   habit: Habit;
   weekDates: Date[];
   getCellState: (habitId: number, date: Date) => { count: number; ids: number[] };
   onCellClick: (habitId: number, target: number, date: Date, ids: number[]) => void;
-}
-
-function isSameDay(a: Date, b: Date): boolean {
-  return a.toISOString().slice(0, 10) === b.toISOString().slice(0, 10);
 }
 
 export default function HabitRow({ habit, weekDates, getCellState, onCellClick }: Props) {

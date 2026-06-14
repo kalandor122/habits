@@ -30,6 +30,18 @@ router.get('/', async (_req: Request, res: Response) => {
 router.post('/', async (req: Request, res: Response) => {
   try {
     const { title, category_id, tags: tagIds, daily_target } = req.body;
+
+    // Input validation
+    if (!title || typeof title !== 'string' || title.trim().length === 0) {
+      return res.status(400).json({ error: 'title is required and must be non-empty' });
+    }
+    if (category_id !== undefined && category_id !== null && (!Number.isInteger(category_id) || category_id <= 0)) {
+      return res.status(400).json({ error: 'category_id must be a positive integer' });
+    }
+    if (daily_target !== undefined && daily_target !== null && (!Number.isInteger(daily_target) || daily_target <= 0)) {
+      return res.status(400).json({ error: 'daily_target must be a positive integer' });
+    }
+
     const result = await pool.query(
       `INSERT INTO habits (title, category_id, daily_target) VALUES ($1, $2, $3)
        RETURNING *`,
@@ -46,7 +58,24 @@ router.post('/', async (req: Request, res: Response) => {
       }
     }
 
-    res.status(201).json(habit);
+    // Fetch the full habit with tags and category info (same shape as GET /:id)
+    const fullResult = await pool.query(
+      `SELECT h.*, c.name AS category_name, c.color AS category_color,
+        COALESCE(
+          json_agg(json_build_object('id', t.id, 'name', t.name))
+          FILTER (WHERE t.id IS NOT NULL),
+          '[]'::json
+        ) AS tags
+      FROM habits h
+      LEFT JOIN categories c ON c.id = h.category_id
+      LEFT JOIN habit_tags ht ON ht.habit_id = h.id
+      LEFT JOIN tags t ON t.id = ht.tag_id
+      WHERE h.id = $1
+      GROUP BY h.id, c.name, c.color`,
+      [habit.id]
+    );
+
+    res.status(201).json(fullResult.rows[0]);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Internal server error' });
@@ -74,7 +103,28 @@ router.put('/:id', async (req: Request, res: Response) => {
       }
     }
 
-    res.json(result.rows[0] || { error: 'Not found' });
+    if (!result.rows[0]) {
+      return res.status(404).json({ error: 'Not found' });
+    }
+
+    // Fetch full habit with tags and category info
+    const fullResult = await pool.query(
+      `SELECT h.*, c.name AS category_name, c.color AS category_color,
+        COALESCE(
+          json_agg(json_build_object('id', t.id, 'name', t.name))
+          FILTER (WHERE t.id IS NOT NULL),
+          '[]'::json
+        ) AS tags
+      FROM habits h
+      LEFT JOIN categories c ON c.id = h.category_id
+      LEFT JOIN habit_tags ht ON ht.habit_id = h.id
+      LEFT JOIN tags t ON t.id = ht.tag_id
+      WHERE h.id = $1
+      GROUP BY h.id, c.name, c.color`,
+      [id]
+    );
+
+    res.json(fullResult.rows[0]);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Internal server error' });

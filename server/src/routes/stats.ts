@@ -102,6 +102,7 @@ router.get('/today', async (_req: Request, res: Response) => {
   }
 });
 
+// Note: /completion-detail endpoint is reserved for potential future use
 router.get('/completion-detail', async (req: Request, res: Response) => {
   try {
     const from = req.query.from as string;

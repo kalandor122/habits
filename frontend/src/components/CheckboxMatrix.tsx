@@ -1,25 +1,20 @@
 import { useMemo } from 'react';
 import { useHabits } from '../hooks/useHabits';
 import { useCompletionsRange, useCreateCompletion, useClearCompletions } from '../hooks/useCompletions';
+import { startOfWeek, eachDayOfInterval, endOfWeek, format } from 'date-fns';
 import HabitRow from './HabitRow';
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 function getWeekDates(): Date[] {
   const today = new Date();
-  const day = today.getDay();
-  const diff = day === 0 ? -6 : 1 - day;
-  const monday = new Date(today);
-  monday.setDate(today.getDate() + diff);
-  return Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(monday);
-    d.setDate(monday.getDate() + i);
-    return d;
-  });
+  const start = startOfWeek(today, { weekStartsOn: 1 });
+  const end = endOfWeek(today, { weekStartsOn: 1 });
+  return eachDayOfInterval({ start, end });
 }
 
 function toDateStr(d: Date): string {
-  return d.toISOString().slice(0, 10);
+  return format(d, 'yyyy-MM-dd');
 }
 
 export default function CheckboxMatrix() {
@@ -55,11 +50,11 @@ export default function CheckboxMatrix() {
       <table className="w-full table-fixed border-collapse">
         <thead>
           <tr>
-            <th className="text-left text-xs text-gray-400 font-medium pb-2 w-48 border-b border-white-200 border-r border-gray-100">
+            <th className="text-left text-xs text-gray-400 font-medium pb-2 w-48 border-b border-gray-200 border-r border-gray-100">
               Habit
             </th>
             {weekDates.map((d, i) => (
-              <th key={i} className="text-center text-xs text-gray-400 font-medium pb-2 w-20 border-b border-white-200 border-r border-gray-100 last:border-r-0">
+              <th key={i} className="text-center text-xs text-gray-400 font-medium pb-2 w-20 border-b border-gray-200 border-r border-gray-100 last:border-r-0">
                 <div>{DAYS[i]}</div>
                 <div className="text-gray-300">{d.getDate()}</div>
               </th>

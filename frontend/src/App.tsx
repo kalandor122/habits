@@ -7,12 +7,7 @@ import LineChart from './components/LineChart';
 import Gauge from './components/Gauge';
 import HabitForm from './components/HabitForm';
 
-const NAV_ITEMS = [
-  { label: 'Dashboard', icon: '■' }
-];
-
 export default function App() {
-  const [activeNav, setActiveNav] = useState('Dashboard');
   const [showForm, setShowForm] = useState(false);
   const { data: categories } = useCategories();
   const { data: tags } = useTags();
@@ -23,20 +18,12 @@ export default function App() {
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col flex-1 p-4">
           <h1 className="text-lg font-semibold text-gray-900 mb-6 px-2">Habits</h1>
           <nav className="flex flex-col gap-1 flex-1">
-            {NAV_ITEMS.map((item) => (
-              <button
-                key={item.label}
-                onClick={() => setActiveNav(item.label)}
-                className={`flex items-center gap-3 px-2 py-2 rounded-lg text-sm transition-colors ${
-                  activeNav === item.label
-                    ? 'bg-green-50 text-green-700 font-medium'
-                    : 'text-gray-500 hover:text-gray-800 hover:bg-gray-50'
-                }`}
-              >
-                <span className="w-5 text-center text-xs">{item.icon}</span>
-                {item.label}
-              </button>
-            ))}
+            <button
+              className="flex items-center gap-3 px-2 py-2 rounded-lg text-sm bg-green-50 text-green-700 font-medium"
+            >
+              <span className="w-5 text-center text-xs">■</span>
+              Dashboard
+            </button>
           </nav>
           <button
             onClick={() => setShowForm(true)}
